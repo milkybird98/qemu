@@ -469,6 +469,56 @@ static int get_physical_address(CPURISCVState *env, hwaddr *physical,
     int ptshift = (levels - 1) * ptidxbits;
     int i;
 
+    if (first_stage == true) {
+        target_ulong dsbase;
+        target_ulong dslimit;
+        target_ulong dsoffset;
+        target_ulong first_stage_paddr;
+        target_ulong mask = ~((target_ulong(1) << PGSHIFT) - 1);
+
+        if (use_background) {
+            dsbase = env->vsdsbase;
+            dslimit = env->vsdslimit;
+            dsoffset = env->vsdslimit;
+        }else{
+            dsbase = env->sdsbase;
+            dslimit = env->sdslimit;
+            dsoffset = env->sdslimit;
+        }
+
+        if (dsbase & (target_ulong(1))) {
+            if (likely(addr >= (dsbase & mask) && addr < (dslimit & mask))){
+                first_stage_paddr = dsoffset & (target_ulong(1)) ? addr - (dsoffset & mask) : addr + (dsoffset & mask);
+
+                *physical = first_stage_paddr;
+                *prot = PAGE_READ | PAGE_WRITE | PAGE_EXEC;
+
+                return TRANSLATE_SUCCESS;
+            }
+        }
+    }else{
+        target_ulong dsbase;
+        target_ulong dslimit;
+        target_ulong dsoffset;
+        target_ulong second_stage_paddr;
+        target_ulong mask = ~((target_ulong(1) << PGSHIFT) - 1);
+
+        dsbase = env->hdsbase;
+        dslimit = env->hdslimit;
+        dsoffset = env->hdslimit;
+
+        if (dsbase & (target_ulong(1))) {
+            if (likely(addr >= (dsbase & mask) && addr < (dslimit & mask))){
+                second_stage_paddr = dsoffset & (target_ulong(1)) ? addr - (dsoffset & mask) : addr + (dsoffset & mask);
+
+                *physical = second_stage_paddr;
+                *prot = PAGE_READ | PAGE_WRITE | PAGE_EXEC;
+
+                return TRANSLATE_SUCCESS;
+            }
+        }
+    }
+
 #if !TCG_OVERSIZED_GUEST
 restart:
 #endif
