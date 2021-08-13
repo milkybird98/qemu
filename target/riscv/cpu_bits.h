@@ -179,6 +179,11 @@
 #define CSR_SPTBR           0x180
 #define CSR_SATP            0x180
 
+/* Supervisor Direct Segments CSRs */
+#define CSR_SDSBASE         0x181
+#define CSR_SDSLIMIT        0x182
+#define CSR_SDSOFFSET       0x183
+
 /* Hpervisor CSRs */
 #define CSR_HSTATUS         0x600
 #define CSR_HEDELEG         0x602
@@ -195,6 +200,11 @@
 #define CSR_HTIMEDELTA      0x605
 #define CSR_HTIMEDELTAH     0x615
 
+/* Hypervisor Direct Segments CSRs */
+#define CSR_HDSBASE         0x681
+#define CSR_HDSLIMIT        0x682
+#define CSR_HDSOFFSET       0x683
+
 /* Virtual CSRs */
 #define CSR_VSSTATUS        0x200
 #define CSR_VSIE            0x204
@@ -205,6 +215,11 @@
 #define CSR_VSTVAL          0x243
 #define CSR_VSIP            0x244
 #define CSR_VSATP           0x280
+
+/* Virtual Supervisor Direct Segments CSRs */
+#define CSR_VSDSBASE        0x281
+#define CSR_VSDSLIMIT       0x282
+#define CSR_VSDSOFFSET      0x283
 
 #define CSR_MTINST          0x34a
 #define CSR_MTVAL2          0x34b

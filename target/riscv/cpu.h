@@ -168,6 +168,10 @@ struct CPURISCVState {
     target_ulong stval;
     target_ulong medeleg;
 
+    target_ulong sdsbase;
+    target_ulong sdslimit;
+    target_ulong sdsoffset;
+
     target_ulong stvec;
     target_ulong sepc;
     target_ulong scause;
@@ -186,6 +190,9 @@ struct CPURISCVState {
     target_ulong htinst;
     target_ulong hgatp;
     uint64_t htimedelta;
+    target_ulong hdsbase;
+    target_ulong hdslimit;
+    target_ulong hdsoffset;
 
     /* Virtual CSRs */
     /*
@@ -199,6 +206,9 @@ struct CPURISCVState {
     target_ulong vscause;
     target_ulong vstval;
     target_ulong vsatp;
+    target_ulong vsdsbase;
+    target_ulong vsdslimit;
+    target_ulong vsdsoffset;
 
     target_ulong mtval2;
     target_ulong mtinst;
@@ -211,6 +221,9 @@ struct CPURISCVState {
     target_ulong stval_hs;
     target_ulong satp_hs;
     uint64_t mstatus_hs;
+    target_ulong sdsbase_hs;
+    target_ulong sdslimit_hs;
+    target_ulong sdsoffset_hs;
 
     /* Signals whether the current exception occurred with two-stage address
        translation active. */

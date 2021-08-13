@@ -1010,6 +1010,65 @@ static RISCVException write_satp(CPURISCVState *env, int csrno,
     return RISCV_EXCP_NONE;
 }
 
+/* Supervisor Direct Segments */
+static RISCVException read_sdsbase(CPURISCVState *env, int csrno,
+                                target_ulong *val)
+{
+    target_ulong mask = ~((target_ulong(1) << PGSHIFT) - 1);
+    mask |= target_ulong(1);
+    *val = env->sdsbase & mask;
+
+    return RISCV_EXCP_NONE;
+}
+
+static RISCVException write_sdsbase(CPURISCVState *env, int csrno,
+                                target_ulong val)
+{
+    target_ulong mask = ~((target_ulong(1) << PGSHIFT) - 1);
+    mask |= target_ulong(1);
+    env->sdsbase = val & mask;
+
+    return RISCV_EXCP_NONE;
+}
+
+static RISCVException read_sdslimit(CPURISCVState *env, int csrno,
+                                target_ulong *val)
+{
+    target_ulong mask = ~((target_ulong(1) << PGSHIFT) - 1);
+    *val = env->sdslimit & mask;
+
+    return RISCV_EXCP_NONE;
+}
+
+static RISCVException write_sdslimit(CPURISCVState *env, int csrno,
+                                target_ulong val)
+{
+    target_ulong mask = ~((target_ulong(1) << PGSHIFT) - 1);
+    env->sdslimit = val & mask;
+    
+    return RISCV_EXCP_NONE;
+}
+
+static RISCVException read_sdsoffset(CPURISCVState *env, int csrno,
+                                target_ulong *val)
+{
+    target_ulong mask = ~((target_ulong(1) << PGSHIFT) - 1);
+    mask |= target_ulong(1);
+    *val = env->sdsoffset & mask;
+
+    return RISCV_EXCP_NONE;
+}
+
+static RISCVException write_sdsoffset(CPURISCVState *env, int csrno,
+                                target_ulong val)
+{
+    target_ulong mask = ~((target_ulong(1) << PGSHIFT) - 1);
+    mask |= target_ulong(1);
+    env->sdsoffset = val & mask;
+    
+    return RISCV_EXCP_NONE;
+}
+
 /* Hypervisor Extensions */
 static RISCVException read_hstatus(CPURISCVState *env, int csrno,
                                    target_ulong *val)
@@ -1234,6 +1293,65 @@ static RISCVException write_htimedeltah(CPURISCVState *env, int csrno,
     return RISCV_EXCP_NONE;
 }
 
+/* Hypervisor Direct Segments */
+static RISCVException read_hdsbase(CPURISCVState *env, int csrno,
+                                target_ulong *val)
+{
+    target_ulong mask = ~((target_ulong(1) << PGSHIFT) - 1);
+    mask |= target_ulong(1);
+    *val = env->hdsbase & mask;
+
+    return RISCV_EXCP_NONE;
+}
+
+static RISCVException write_hdsbase(CPURISCVState *env, int csrno,
+                                target_ulong val)
+{
+    target_ulong mask = ~((target_ulong(1) << PGSHIFT) - 1);
+    mask |= target_ulong(1);
+    env->hdsbase = val & mask;
+
+    return RISCV_EXCP_NONE;
+}
+
+static RISCVException read_hdslimit(CPURISCVState *env, int csrno,
+                                target_ulong *val)
+{
+    target_ulong mask = ~((target_ulong(1) << PGSHIFT) - 1);
+    *val = env->hdslimit & mask;
+
+    return RISCV_EXCP_NONE;
+}
+
+static RISCVException write_hdslimit(CPURISCVState *env, int csrno,
+                                target_ulong val)
+{
+    target_ulong mask = ~((target_ulong(1) << PGSHIFT) - 1);
+    env->hdslimit = val & mask;
+    
+    return RISCV_EXCP_NONE;
+}
+
+static RISCVException read_hdsoffset(CPURISCVState *env, int csrno,
+                                target_ulong *val)
+{
+    target_ulong mask = ~((target_ulong(1) << PGSHIFT) - 1);
+    mask |= target_ulong(1);
+    *val = env->hdsoffset & mask;
+
+    return RISCV_EXCP_NONE;
+}
+
+static RISCVException write_hdsoffset(CPURISCVState *env, int csrno,
+                                target_ulong val)
+{
+    target_ulong mask = ~((target_ulong(1) << PGSHIFT) - 1);
+    mask |= target_ulong(1);
+    env->hdsoffset = val & mask;
+    
+    return RISCV_EXCP_NONE;
+}
+
 /* Virtual CSR Registers */
 static RISCVException read_vsstatus(CPURISCVState *env, int csrno,
                                     target_ulong *val)
@@ -1330,6 +1448,65 @@ static RISCVException write_vsatp(CPURISCVState *env, int csrno,
                                   target_ulong val)
 {
     env->vsatp = val;
+    return RISCV_EXCP_NONE;
+}
+
+/* Virtual Supervisor Direct Segments */
+static RISCVException read_vsdsbase(CPURISCVState *env, int csrno,
+                                target_ulong *val)
+{
+    target_ulong mask = ~((target_ulong(1) << PGSHIFT) - 1);
+    mask |= target_ulong(1);
+    *val = env->vsdsbase & mask;
+
+    return RISCV_EXCP_NONE;
+}
+
+static RISCVException write_vsdsbase(CPURISCVState *env, int csrno,
+                                target_ulong val)
+{
+    target_ulong mask = ~((target_ulong(1) << PGSHIFT) - 1);
+    mask |= target_ulong(1);
+    env->vsdsbase = val & mask;
+
+    return RISCV_EXCP_NONE;
+}
+
+static RISCVException read_vsdslimit(CPURISCVState *env, int csrno,
+                                target_ulong *val)
+{
+    target_ulong mask = ~((target_ulong(1) << PGSHIFT) - 1);
+    *val = env->vsdslimit & mask;
+
+    return RISCV_EXCP_NONE;
+}
+
+static RISCVException write_vsdslimit(CPURISCVState *env, int csrno,
+                                target_ulong val)
+{
+    target_ulong mask = ~((target_ulong(1) << PGSHIFT) - 1);
+    env->vsdslimit = val & mask;
+    
+    return RISCV_EXCP_NONE;
+}
+
+static RISCVException read_vsdsoffset(CPURISCVState *env, int csrno,
+                                target_ulong *val)
+{
+    target_ulong mask = ~((target_ulong(1) << PGSHIFT) - 1);
+    mask |= target_ulong(1);
+    *val = env->vsdsoffset & mask;
+
+    return RISCV_EXCP_NONE;
+}
+
+static RISCVException write_vsdsoffset(CPURISCVState *env, int csrno,
+                                target_ulong val)
+{
+    target_ulong mask = ~((target_ulong(1) << PGSHIFT) - 1);
+    mask |= target_ulong(1);
+    env->vsdsoffset = val & mask;
+    
     return RISCV_EXCP_NONE;
 }
 
@@ -1585,6 +1762,11 @@ riscv_csr_operations csr_ops[CSR_TABLE_SIZE] = {
     /* Supervisor Protection and Translation */
     [CSR_SATP]     = { "satp",     smode, read_satp,    write_satp      },
 
+    /* Supervisor Direct Segments */
+    [CSR_SDSBASE]   = { "sdsbase",      smode,  read_sdsbase,   write_sdsbase   },
+    [CSR_SDSLIMIT]  = { "sdslimit",     smode,  read_sdslimit,  write_sdslimit  },
+    [CSR_SDSOFFSET] = { "sdsoffset",    smode,  read_sdsoffset, write_sdsoffset },
+
     [CSR_HSTATUS]     = { "hstatus",     hmode,   read_hstatus,     write_hstatus     },
     [CSR_HEDELEG]     = { "hedeleg",     hmode,   read_hedeleg,     write_hedeleg     },
     [CSR_HIDELEG]     = { "hideleg",     hmode,   read_hideleg,     write_hideleg     },
@@ -1600,6 +1782,11 @@ riscv_csr_operations csr_ops[CSR_TABLE_SIZE] = {
     [CSR_HTIMEDELTA]  = { "htimedelta",  hmode,   read_htimedelta,  write_htimedelta  },
     [CSR_HTIMEDELTAH] = { "htimedeltah", hmode32, read_htimedeltah, write_htimedeltah },
 
+    /* Hypervisor Direct Segments */
+    [CSR_HDSBASE]     = { "hdsbase",     hmode,   read_hdsbase,     write_hdsbase     },
+    [CSR_HDSLIMIT]    = { "hdslimit",    hmode,   read_hdslimit,    write_hdslimit    },
+    [CSR_HDSOFFSET]   = { "hdsoffset",   hmode,   read_hdsoffset,   write_hdsoffset   },
+
     [CSR_VSSTATUS]    = { "vsstatus",    hmode,   read_vsstatus,    write_vsstatus    },
     [CSR_VSIP]        = { "vsip",        hmode,   NULL,    NULL,    rmw_vsip          },
     [CSR_VSIE]        = { "vsie",        hmode,   read_vsie,        write_vsie        },
@@ -1609,6 +1796,11 @@ riscv_csr_operations csr_ops[CSR_TABLE_SIZE] = {
     [CSR_VSCAUSE]     = { "vscause",     hmode,   read_vscause,     write_vscause     },
     [CSR_VSTVAL]      = { "vstval",      hmode,   read_vstval,      write_vstval      },
     [CSR_VSATP]       = { "vsatp",       hmode,   read_vsatp,       write_vsatp       },
+
+    /* Virtual Supervisor Direct Segments */
+    [CSR_VSDSBASE]    = { "vsdsbase",    hmode,   read_vsdsbase,    write_vsdsbase    },
+    [CSR_VSDSLIMIT]   = { "vsdslimit",   hmode,   read_vsdslimit,   write_vsdslimit   },
+    [CSR_VSDSOFFSET]  = { "vsdsoffset",  hmode,   read_vsdsoffset,  write_vsdsoffset  },
 
     [CSR_MTVAL2]      = { "mtval2",      hmode,   read_mtval2,      write_mtval2      },
     [CSR_MTINST]      = { "mtinst",      hmode,   read_mtinst,      write_mtinst      },
