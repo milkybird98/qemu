@@ -76,6 +76,11 @@ static bool hyper_needed(void *opaque)
     return riscv_has_ext(env, RVH);
 }
 
+static bool ds_needed(void *opaque)
+{
+    return true;
+}
+
 static bool vector_needed(void *opaque)
 {
     RISCVCPU *cpu = opaque;
@@ -98,6 +103,32 @@ static const VMStateDescription vmstate_vector = {
             VMSTATE_UINTTL(env.vtype, RISCVCPU),
             VMSTATE_END_OF_LIST()
         }
+};
+
+static const VMStateDescription vmstate_ds = {
+    .name = "cpu/ds",
+    .version_id = 1,
+    .minimum_version_id = 1,
+    .needed = ds_needed,
+    .fields = (VMStateField[]) {
+        VMSTATE_UINTTL(env.sdsbase, RISCVCPU),
+        VMSTATE_UINTTL(env.sdslimit, RISCVCPU),
+        VMSTATE_UINTTL(env.sdsoffset, RISCVCPU),
+
+        VMSTATE_UINTTL(env.vsdsbase, RISCVCPU),
+        VMSTATE_UINTTL(env.vsdslimit, RISCVCPU),
+        VMSTATE_UINTTL(env.vsdsoffset, RISCVCPU),
+
+        VMSTATE_UINTTL(env.hdsbase, RISCVCPU),
+        VMSTATE_UINTTL(env.hdslimit, RISCVCPU),
+        VMSTATE_UINTTL(env.hdsoffset, RISCVCPU),
+
+        VMSTATE_UINTTL(env.sdsbase_hs, RISCVCPU),
+        VMSTATE_UINTTL(env.sdslimit_hs, RISCVCPU),
+        VMSTATE_UINTTL(env.sdsoffset_hs, RISCVCPU),
+
+        VMSTATE_END_OF_LIST()
+    }
 };
 
 static const VMStateDescription vmstate_hyper = {
@@ -189,6 +220,7 @@ const VMStateDescription vmstate_riscv_cpu = {
         &vmstate_pmp,
         &vmstate_hyper,
         &vmstate_vector,
+        &vmstate_ds,
         NULL
     }
 };

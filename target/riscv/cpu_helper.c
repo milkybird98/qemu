@@ -141,6 +141,15 @@ void riscv_cpu_swap_hypervisor_regs(CPURISCVState *env)
 
         env->vsatp = env->satp;
         env->satp = env->satp_hs;
+
+        env->vsdsbase = env->sdsbase;
+        env->sdsbase = env->sdsbase_hs;
+
+        env->vsdslimit = env->sdslimit;
+        env->sdslimit = env->sdslimit_hs;
+
+        env->vsdsoffset = env->sdsoffset;
+        env->sdsoffset = env->sdsoffset_hs;
     } else {
         /* Current V=0 and we are about to change to V=1 */
         env->mstatus_hs = env->mstatus & mstatus_mask;
@@ -164,6 +173,15 @@ void riscv_cpu_swap_hypervisor_regs(CPURISCVState *env)
 
         env->satp_hs = env->satp;
         env->satp = env->vsatp;
+
+        env->sdsbase_hs = env->sdsbase;
+        env->sdsbase = env->vsdsbase;
+
+        env->sdslimit_hs = env->sdslimit;
+        env->sdslimit = env->vsdslimit;
+
+        env->sdsoffset_hs = env->sdsoffset;
+        env->sdsoffset = env->vsdsoffset;
     }
 }
 
@@ -474,24 +492,29 @@ static int get_physical_address(CPURISCVState *env, hwaddr *physical,
         target_ulong dslimit;
         target_ulong dsoffset;
         target_ulong first_stage_paddr;
-        target_ulong mask = ~((target_ulong(1) << PGSHIFT) - 1);
+        target_ulong mask = ~(((target_ulong)(1) << PGSHIFT) - 1);
 
         if (use_background) {
             dsbase = env->vsdsbase;
             dslimit = env->vsdslimit;
-            dsoffset = env->vsdslimit;
+            dsoffset = env->vsdsoffset;
         }else{
             dsbase = env->sdsbase;
             dslimit = env->sdslimit;
-            dsoffset = env->sdslimit;
+            dsoffset = env->sdsoffset;
         }
 
-        if (dsbase & (target_ulong(1))) {
+        if (dsbase & ((target_ulong)(1))) {
             if (likely(addr >= (dsbase & mask) && addr < (dslimit & mask))){
-                first_stage_paddr = dsoffset & (target_ulong(1)) ? addr - (dsoffset & mask) : addr + (dsoffset & mask);
+                first_stage_paddr = (dsoffset & (target_ulong)(1)) ? addr - (dsoffset & mask) : addr + (dsoffset & mask);
 
                 *physical = first_stage_paddr;
                 *prot = PAGE_READ | PAGE_WRITE | PAGE_EXEC;
+
+                qemu_log_mask(CPU_LOG_MMU,
+                    "%s 1st-stage ds base=" TARGET_FMT_lx " limit=" TARGET_FMT_lx
+                    " offset=" TARGET_FMT_lx " mode=%s\n",
+                    __func__, dsbase & mask, dslimit & mask, dsoffset, (dsoffset & (target_ulong)(1)) ? "minus" : "plus");
 
                 return TRANSLATE_SUCCESS;
             }
@@ -500,19 +523,21 @@ static int get_physical_address(CPURISCVState *env, hwaddr *physical,
         target_ulong dsbase;
         target_ulong dslimit;
         target_ulong dsoffset;
-        target_ulong second_stage_paddr;
-        target_ulong mask = ~((target_ulong(1) << PGSHIFT) - 1);
+        target_ulong mask = ~(((target_ulong)(1) << PGSHIFT) - 1);
 
         dsbase = env->hdsbase;
         dslimit = env->hdslimit;
-        dsoffset = env->hdslimit;
+        dsoffset = env->hdsoffset;
 
-        if (dsbase & (target_ulong(1))) {
+        if (dsbase & ((target_ulong)(1))) {
             if (likely(addr >= (dsbase & mask) && addr < (dslimit & mask))){
-                second_stage_paddr = dsoffset & (target_ulong(1)) ? addr - (dsoffset & mask) : addr + (dsoffset & mask);
-
-                *physical = second_stage_paddr;
+                *physical = (dsoffset & (target_ulong)(1)) ? addr - (dsoffset & mask) : addr + (dsoffset & mask);
                 *prot = PAGE_READ | PAGE_WRITE | PAGE_EXEC;
+
+                qemu_log_mask(CPU_LOG_MMU,
+                    "%s 2st-stage ds base=" TARGET_FMT_lx " limit=" TARGET_FMT_lx
+                    " offset=" TARGET_FMT_lx " mode=%s\n",
+                    __func__, dsbase & mask, dslimit & mask, dsoffset, (dsoffset & (target_ulong)(1)) ? "minus" : "plus");
 
                 return TRANSLATE_SUCCESS;
             }
