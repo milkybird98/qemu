@@ -488,11 +488,21 @@ static int get_physical_address(CPURISCVState *env, hwaddr *physical,
     int i;
 
     if (first_stage == true) {
-        target_ulong dsbase;
-        target_ulong dslimit;
-        target_ulong dsoffset;
-        target_ulong first_stage_paddr;
-        target_ulong mask = ~(((target_ulong)(1) << PGSHIFT) - 1);
+        uint64_t dsbase;
+        uint64_t dslimit;
+        uint64_t dsoffset;
+        uint64_t mask;
+        uint64_t enable_mask;
+        uint64_t offset_mode_mask;
+        if (riscv_cpu_is_32bit(env)) {
+            mask = ((uint64_t)(1) << 22) - 1;
+            enable_mask = (uint64_t)(1) << 31;
+            offset_mode_mask = enable_mask;
+        }else{
+            mask = ((uint64_t)(1) << 44) - 1;
+            enable_mask = (uint64_t)(1) << 63;
+            offset_mode_mask = enable_mask;
+        }
 
         if (use_background) {
             dsbase = env->vsdsbase;
@@ -504,40 +514,57 @@ static int get_physical_address(CPURISCVState *env, hwaddr *physical,
             dsoffset = env->sdsoffset;
         }
 
-        if (dsbase & ((target_ulong)(1))) {
-            if (likely(addr >= (dsbase & mask) && addr < (dslimit & mask))){
-                first_stage_paddr = (dsoffset & (target_ulong)(1)) ? addr - (dsoffset & mask) : addr + (dsoffset & mask);
-
-                *physical = first_stage_paddr;
+        if (dsbase & enable_mask) {
+            if (likely(addr >= ((dsbase & mask) << 12) && addr < ((dslimit & mask) << 12))){
+                if (dsoffset & offset_mode_mask) {
+                    *physical = addr - ((dsoffset & mask) << 12);
+                }else{
+                    *physical = addr + ((dsoffset & mask) << 12);
+                }
                 *prot = PAGE_READ | PAGE_WRITE | PAGE_EXEC;
 
                 qemu_log_mask(CPU_LOG_MMU,
-                    "%s 1st-stage ds base=" TARGET_FMT_lx " limit=" TARGET_FMT_lx
-                    " offset=" TARGET_FMT_lx " mode=%s\n",
-                    __func__, dsbase & mask, dslimit & mask, dsoffset, (dsoffset & (target_ulong)(1)) ? "minus" : "plus");
+                    "%s 1st-stage ds base=%016lx limit=%016lx"
+                    " offset=%016lx mode=%s\n",
+                    __func__, dsbase << 12, dslimit << 12, dsoffset << 12, (dsoffset & offset_mode_mask) ? "minus" : "plus");
 
                 return TRANSLATE_SUCCESS;
             }
         }
     }else{
-        target_ulong dsbase;
-        target_ulong dslimit;
-        target_ulong dsoffset;
-        target_ulong mask = ~(((target_ulong)(1) << PGSHIFT) - 1);
+        uint64_t dsbase;
+        uint64_t dslimit;
+        uint64_t dsoffset;
+        uint64_t mask;
+        uint64_t enable_mask;
+        uint64_t offset_mode_mask;
+        if (riscv_cpu_is_32bit(env)) {
+            mask = ((uint64_t)(1) << 22) - 1;
+            enable_mask = (uint64_t)(1) << 31;
+            offset_mode_mask = enable_mask;
+        }else{
+            mask = ((uint64_t)(1) << 44) - 1;
+            enable_mask = (uint64_t)(1) << 63;
+            offset_mode_mask = enable_mask;
+        }
 
         dsbase = env->hdsbase;
         dslimit = env->hdslimit;
         dsoffset = env->hdsoffset;
 
-        if (dsbase & ((target_ulong)(1))) {
-            if (likely(addr >= (dsbase & mask) && addr < (dslimit & mask))){
-                *physical = (dsoffset & (target_ulong)(1)) ? addr - (dsoffset & mask) : addr + (dsoffset & mask);
+        if (dsbase & enable_mask) {
+            if (likely(addr >= ((dsbase & mask) << 12) && addr < ((dslimit & mask) << 12))){
+                if (dsoffset & offset_mode_mask) {
+                    *physical = addr - ((dsoffset & mask) << 12);
+                }else{
+                    *physical = addr + ((dsoffset & mask) << 12);
+                }
                 *prot = PAGE_READ | PAGE_WRITE | PAGE_EXEC;
 
                 qemu_log_mask(CPU_LOG_MMU,
-                    "%s 2st-stage ds base=" TARGET_FMT_lx " limit=" TARGET_FMT_lx
-                    " offset=" TARGET_FMT_lx " mode=%s\n",
-                    __func__, dsbase & mask, dslimit & mask, dsoffset, (dsoffset & (target_ulong)(1)) ? "minus" : "plus");
+                    "%s 2nd-stage ds base=%016lx limit=%016lx"
+                    " offset=%016lx mode=%s\n",
+                    __func__, dsbase << 12, dslimit << 12, dsoffset << 12, (dsoffset & offset_mode_mask) ? "minus" : "plus");
 
                 return TRANSLATE_SUCCESS;
             }

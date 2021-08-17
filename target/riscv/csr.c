@@ -1014,8 +1014,12 @@ static RISCVException write_satp(CPURISCVState *env, int csrno,
 static RISCVException read_sdsbase(CPURISCVState *env, int csrno,
                                 target_ulong *val)
 {
-    target_ulong mask = ~(((target_ulong)(1) << PGSHIFT) - 1);
-    mask |= (target_ulong)(1);
+    uint64_t mask;
+    if (riscv_cpu_is_32bit(env)) {
+        mask = (((uint64_t)(1) << 22) - 1) | ((uint64_t)(1) << 31);
+    }else{
+        mask = (((uint64_t)(1) << 44) - 1) | ((uint64_t)(1) << 63);
+    }
     *val = env->sdsbase & mask;
 
     return RISCV_EXCP_NONE;
@@ -1024,8 +1028,12 @@ static RISCVException read_sdsbase(CPURISCVState *env, int csrno,
 static RISCVException write_sdsbase(CPURISCVState *env, int csrno,
                                 target_ulong val)
 {
-    target_ulong mask = ~(((target_ulong)(1) << PGSHIFT) - 1);
-    mask |= (target_ulong)(1);
+    uint64_t mask;
+    if (riscv_cpu_is_32bit(env)) {
+        mask = (((uint64_t)(1) << 22) - 1) | ((uint64_t)(1) << 31);
+    }else{
+        mask = (((uint64_t)(1) << 44) - 1) | ((uint64_t)(1) << 63);
+    }
     env->sdsbase = val & mask;
 
     return RISCV_EXCP_NONE;
@@ -1034,7 +1042,12 @@ static RISCVException write_sdsbase(CPURISCVState *env, int csrno,
 static RISCVException read_sdslimit(CPURISCVState *env, int csrno,
                                 target_ulong *val)
 {
-    target_ulong mask = ~(((target_ulong)(1) << PGSHIFT) - 1);
+    uint64_t mask;
+    if (riscv_cpu_is_32bit(env)) {
+        mask = ((uint64_t)(1) << 22) - 1;
+    }else{
+        mask = ((uint64_t)(1) << 44) - 1;
+    }
     *val = env->sdslimit & mask;
 
     return RISCV_EXCP_NONE;
@@ -1043,7 +1056,12 @@ static RISCVException read_sdslimit(CPURISCVState *env, int csrno,
 static RISCVException write_sdslimit(CPURISCVState *env, int csrno,
                                 target_ulong val)
 {
-    target_ulong mask = ~(((target_ulong)(1) << PGSHIFT) - 1);
+    uint64_t mask;
+    if (riscv_cpu_is_32bit(env)) {
+        mask = ((uint64_t)(1) << 22) - 1;
+    }else{
+        mask = ((uint64_t)(1) << 44) - 1;
+    }
     env->sdslimit = val & mask;
     
     return RISCV_EXCP_NONE;
@@ -1052,8 +1070,12 @@ static RISCVException write_sdslimit(CPURISCVState *env, int csrno,
 static RISCVException read_sdsoffset(CPURISCVState *env, int csrno,
                                 target_ulong *val)
 {
-    target_ulong mask = ~(((target_ulong)(1) << PGSHIFT) - 1);
-    mask |= (target_ulong)(1);
+    uint64_t mask;
+    if (riscv_cpu_is_32bit(env)) {
+        mask = (((uint64_t)(1) << 22) - 1) | ((uint64_t)(1) << 31);
+    }else{
+        mask = (((uint64_t)(1) << 44) - 1) | ((uint64_t)(1) << 63);
+    }
     *val = env->sdsoffset & mask;
 
     return RISCV_EXCP_NONE;
@@ -1062,8 +1084,12 @@ static RISCVException read_sdsoffset(CPURISCVState *env, int csrno,
 static RISCVException write_sdsoffset(CPURISCVState *env, int csrno,
                                 target_ulong val)
 {
-    target_ulong mask = ~(((target_ulong)(1) << PGSHIFT) - 1);
-    mask |= (target_ulong)(1);
+    uint64_t mask;
+    if (riscv_cpu_is_32bit(env)) {
+        mask = (((uint64_t)(1) << 22) - 1) | ((uint64_t)(1) << 31);
+    }else{
+        mask = (((uint64_t)(1) << 44) - 1) | ((uint64_t)(1) << 63);
+    }
     env->sdsoffset = val & mask;
     
     return RISCV_EXCP_NONE;
@@ -1297,8 +1323,12 @@ static RISCVException write_htimedeltah(CPURISCVState *env, int csrno,
 static RISCVException read_hdsbase(CPURISCVState *env, int csrno,
                                 target_ulong *val)
 {
-    target_ulong mask = ~(((target_ulong)(1) << PGSHIFT) - 1);
-    mask |= (target_ulong)(1);
+    uint64_t mask;
+    if (riscv_cpu_is_32bit(env)) {
+        mask = (((uint64_t)(1) << 22) - 1) | ((uint64_t)(1) << 31);
+    }else{
+        mask = (((uint64_t)(1) << 44) - 1) | ((uint64_t)(1) << 63);
+    }
     *val = env->hdsbase & mask;
 
     return RISCV_EXCP_NONE;
@@ -1307,8 +1337,12 @@ static RISCVException read_hdsbase(CPURISCVState *env, int csrno,
 static RISCVException write_hdsbase(CPURISCVState *env, int csrno,
                                 target_ulong val)
 {
-    target_ulong mask = ~(((target_ulong)(1) << PGSHIFT) - 1);
-    mask |= (target_ulong)(1);
+    uint64_t mask;
+    if (riscv_cpu_is_32bit(env)) {
+        mask = (((uint64_t)(1) << 22) - 1) | ((uint64_t)(1) << 31);
+    }else{
+        mask = (((uint64_t)(1) << 44) - 1) | ((uint64_t)(1) << 63);
+    }
     env->hdsbase = val & mask;
 
     return RISCV_EXCP_NONE;
@@ -1317,7 +1351,12 @@ static RISCVException write_hdsbase(CPURISCVState *env, int csrno,
 static RISCVException read_hdslimit(CPURISCVState *env, int csrno,
                                 target_ulong *val)
 {
-    target_ulong mask = ~(((target_ulong)(1) << PGSHIFT) - 1);
+    uint64_t mask;
+    if (riscv_cpu_is_32bit(env)) {
+        mask = ((uint64_t)(1) << 22) - 1;
+    }else{
+        mask = ((uint64_t)(1) << 44) - 1;
+    }
     *val = env->hdslimit & mask;
 
     return RISCV_EXCP_NONE;
@@ -1326,7 +1365,12 @@ static RISCVException read_hdslimit(CPURISCVState *env, int csrno,
 static RISCVException write_hdslimit(CPURISCVState *env, int csrno,
                                 target_ulong val)
 {
-    target_ulong mask = ~(((target_ulong)(1) << PGSHIFT) - 1);
+    uint64_t mask;
+    if (riscv_cpu_is_32bit(env)) {
+        mask = ((uint64_t)(1) << 22) - 1;
+    }else{
+        mask = ((uint64_t)(1) << 44) - 1;
+    }
     env->hdslimit = val & mask;
     
     return RISCV_EXCP_NONE;
@@ -1335,8 +1379,12 @@ static RISCVException write_hdslimit(CPURISCVState *env, int csrno,
 static RISCVException read_hdsoffset(CPURISCVState *env, int csrno,
                                 target_ulong *val)
 {
-    target_ulong mask = ~(((target_ulong)(1) << PGSHIFT) - 1);
-    mask |= (target_ulong)(1);
+    uint64_t mask;
+    if (riscv_cpu_is_32bit(env)) {
+        mask = (((uint64_t)(1) << 22) - 1) | ((uint64_t)(1) << 31);
+    }else{
+        mask = (((uint64_t)(1) << 44) - 1) | ((uint64_t)(1) << 63);
+    }
     *val = env->hdsoffset & mask;
 
     return RISCV_EXCP_NONE;
@@ -1345,8 +1393,12 @@ static RISCVException read_hdsoffset(CPURISCVState *env, int csrno,
 static RISCVException write_hdsoffset(CPURISCVState *env, int csrno,
                                 target_ulong val)
 {
-    target_ulong mask = ~(((target_ulong)(1) << PGSHIFT) - 1);
-    mask |= (target_ulong)(1);
+    uint64_t mask;
+    if (riscv_cpu_is_32bit(env)) {
+        mask = (((uint64_t)(1) << 22) - 1) | ((uint64_t)(1) << 31);
+    }else{
+        mask = (((uint64_t)(1) << 44) - 1) | ((uint64_t)(1) << 63);
+    }
     env->hdsoffset = val & mask;
     
     return RISCV_EXCP_NONE;
@@ -1455,8 +1507,12 @@ static RISCVException write_vsatp(CPURISCVState *env, int csrno,
 static RISCVException read_vsdsbase(CPURISCVState *env, int csrno,
                                 target_ulong *val)
 {
-    target_ulong mask = ~(((target_ulong)(1) << PGSHIFT) - 1);
-    mask |= (target_ulong)(1);
+    uint64_t mask;
+    if (riscv_cpu_is_32bit(env)) {
+        mask = (((uint64_t)(1) << 22) - 1) | ((uint64_t)(1) << 31);
+    }else{
+        mask = (((uint64_t)(1) << 44) - 1) | ((uint64_t)(1) << 63);
+    }
     *val = env->vsdsbase & mask;
 
     return RISCV_EXCP_NONE;
@@ -1465,8 +1521,12 @@ static RISCVException read_vsdsbase(CPURISCVState *env, int csrno,
 static RISCVException write_vsdsbase(CPURISCVState *env, int csrno,
                                 target_ulong val)
 {
-    target_ulong mask = ~(((target_ulong)(1) << PGSHIFT) - 1);
-    mask |= (target_ulong)(1);
+    uint64_t mask;
+    if (riscv_cpu_is_32bit(env)) {
+        mask = (((uint64_t)(1) << 22) - 1) | ((uint64_t)(1) << 31);
+    }else{
+        mask = (((uint64_t)(1) << 44) - 1) | ((uint64_t)(1) << 63);
+    }
     env->vsdsbase = val & mask;
 
     return RISCV_EXCP_NONE;
@@ -1475,7 +1535,12 @@ static RISCVException write_vsdsbase(CPURISCVState *env, int csrno,
 static RISCVException read_vsdslimit(CPURISCVState *env, int csrno,
                                 target_ulong *val)
 {
-    target_ulong mask = ~(((target_ulong)(1) << PGSHIFT) - 1);
+    uint64_t mask;
+    if (riscv_cpu_is_32bit(env)) {
+        mask = ((uint64_t)(1) << 22) - 1;
+    }else{
+        mask = ((uint64_t)(1) << 44) - 1;
+    }
     *val = env->vsdslimit & mask;
 
     return RISCV_EXCP_NONE;
@@ -1484,7 +1549,12 @@ static RISCVException read_vsdslimit(CPURISCVState *env, int csrno,
 static RISCVException write_vsdslimit(CPURISCVState *env, int csrno,
                                 target_ulong val)
 {
-    target_ulong mask = ~(((target_ulong)(1) << PGSHIFT) - 1);
+    uint64_t mask;
+    if (riscv_cpu_is_32bit(env)) {
+        mask = ((uint64_t)(1) << 22) - 1;
+    }else{
+        mask = ((uint64_t)(1) << 44) - 1;
+    }
     env->vsdslimit = val & mask;
     
     return RISCV_EXCP_NONE;
@@ -1493,8 +1563,12 @@ static RISCVException write_vsdslimit(CPURISCVState *env, int csrno,
 static RISCVException read_vsdsoffset(CPURISCVState *env, int csrno,
                                 target_ulong *val)
 {
-    target_ulong mask = ~(((target_ulong)(1) << PGSHIFT) - 1);
-    mask |= (target_ulong)(1);
+    uint64_t mask;
+    if (riscv_cpu_is_32bit(env)) {
+        mask = (((uint64_t)(1) << 22) - 1) | ((uint64_t)(1) << 31);
+    }else{
+        mask = (((uint64_t)(1) << 44) - 1) | ((uint64_t)(1) << 63);
+    }
     *val = env->vsdsoffset & mask;
 
     return RISCV_EXCP_NONE;
@@ -1503,8 +1577,12 @@ static RISCVException read_vsdsoffset(CPURISCVState *env, int csrno,
 static RISCVException write_vsdsoffset(CPURISCVState *env, int csrno,
                                 target_ulong val)
 {
-    target_ulong mask = ~(((target_ulong)(1) << PGSHIFT) - 1);
-    mask |= (target_ulong)(1);
+    uint64_t mask;
+    if (riscv_cpu_is_32bit(env)) {
+        mask = (((uint64_t)(1) << 22) - 1) | ((uint64_t)(1) << 31);
+    }else{
+        mask = (((uint64_t)(1) << 44) - 1) | ((uint64_t)(1) << 63);
+    }
     env->vsdsoffset = val & mask;
     
     return RISCV_EXCP_NONE;
